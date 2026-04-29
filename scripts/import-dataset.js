@@ -1,7 +1,8 @@
+require('dotenv').config();
 const XLSX = require('xlsx');
 const path = require('path');
 const { PrismaClient } = require('@prisma/client');
-const { PrismaBetterSqlite3 } = require('@prisma/adapter-better-sqlite3');
+const { PrismaPg } = require('@prisma/adapter-pg');
 
 async function main() {
   console.log('🔄 Starting dataset import...\n');
@@ -15,7 +16,8 @@ async function main() {
   console.log(`📊 Found ${data.length} rows in Excel file.`);
 
   // 2. Connect to database
-  const adapter = new PrismaBetterSqlite3({ url: 'file:./dev.db' });
+  const connectionString = process.env.DATABASE_URL;
+  const adapter = new PrismaPg({ connectionString });
   const prisma = new PrismaClient({ adapter });
 
   // 3. Clear existing dataset entries (fresh import)

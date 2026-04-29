@@ -391,11 +391,7 @@ export default function TranslatePage() {
           </div>
 
           {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-[11px] font-medium tracking-wide" style={{ color: "var(--text-muted)" }}>
-              Powered by a dataset of 7,499+ translation entries • English, Filipino & Teduray
-            </p>
-          </div>
+          
         </div>
       </main>
     </div>

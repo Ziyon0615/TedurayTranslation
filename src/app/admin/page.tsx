@@ -188,10 +188,12 @@ export default function AdminDashboard() {
       if (res.ok) {
         setWords(words.filter(w => w.id !== id));
       } else {
-        alert("Failed to delete word");
+        const errorData = await res.json();
+        alert(`Failed to delete word: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error(error);
+      alert(`Failed to delete word: ${error}`);
     }
   };
 
@@ -202,10 +204,12 @@ export default function AdminDashboard() {
       if (res.ok) {
         setPhrases(phrases.filter(p => p.id !== id));
       } else {
-        alert("Failed to delete phrase");
+        const errorData = await res.json();
+        alert(`Failed to delete phrase: ${errorData.error || "Unknown error"}`);
       }
     } catch (error) {
       console.error(error);
+      alert(`Failed to delete phrase: ${error}`);
     }
   };
 
