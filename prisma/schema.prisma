@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("user")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  translations Translation[]
+  resetRequests PasswordResetRequest[]
+}
+
+model DatasetEntry {
+  id        String   @id @default(cuid())
+  english   String
+  tagalog   String
+  teduray   String
+  englishNormalized String  @default("")
+  tagalogNormalized String  @default("")
+  tedurayNormalized String  @default("")
+  createdAt DateTime @default(now())
+}
+
+model Translation {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceText      String
+  translatedText  String
+  sourceLanguage  String
+  targetLanguage  String
+  createdAt       DateTime @default(now())
+}
+
+model PasswordResetRequest {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    String   @default("PENDING") // PENDING, RESOLVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
