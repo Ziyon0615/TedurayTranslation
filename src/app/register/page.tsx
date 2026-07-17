@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, UserPlus, Languages, Sun, Moon } from "lucide-react";
+import { ArrowRight, UserPlus, Sun, Moon } from "lucide-react";
 import { useTheme } from "@/lib/theme";
+
+const numberPattern = /\d/;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,6 +19,12 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedName = name.trim();
+    if (numberPattern.test(trimmedName)) {
+      setError("Full name cannot contain numbers");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
@@ -24,7 +32,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name: trimmedName, email, password }),
       });
 
       if (res.ok) {
@@ -33,7 +41,7 @@ export default function RegisterPage() {
         const data = await res.json();
         setError(data.error || "Registration failed");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred");
     } finally {
       setIsLoading(false);
@@ -97,10 +105,12 @@ export default function RegisterPage() {
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => setName(e.target.value.replace(/\d/g, ""))}
                 className="px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all"
                 style={{ borderColor: "var(--border-input)", background: "var(--bg-input)", color: "var(--text-input)" }}
                 placeholder="Juan Dela Cruz"
+                pattern="[^0-9]*"
+                title="Full name cannot contain numbers"
                 required
               />
             </div>

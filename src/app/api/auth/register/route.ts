@@ -2,12 +2,19 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+const numberPattern = /\d/;
+
 export async function POST(req: Request) {
   try {
     const { name, email, password } = await req.json();
+    const fullName = typeof name === "string" ? name.trim() : "";
 
-    if (!email || !password || !name) {
+    if (!email || !password || !fullName) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
+
+    if (numberPattern.test(fullName)) {
+      return NextResponse.json({ error: "Full name cannot contain numbers" }, { status: 400 });
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -22,7 +29,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
-        name,
+        name: fullName,
         email,
         password: hashedPassword,
       },
